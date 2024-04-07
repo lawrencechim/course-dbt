@@ -3,7 +3,7 @@ select
     SESSION_ID, 
     USER_ID, 
     PAGE_URL, 
-    CREATED_AT, 
+    CREATED_AT::TIMESTAMPTZ AS CREATED_AT_UTC, 
     EVENT_TYPE, 
     ORDER_ID, 
     PRODUCT_ID
