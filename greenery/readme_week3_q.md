@@ -60,3 +60,39 @@ order by conv_rate desc;
 |Snake Plant|e8b6528e-a830-4d03-a027-473b411c7f02|29|73|39.726|
 |Angel Wings Begonia|58b575f2-2192-4a53-9d21-df9a0c14fc25|24|61|39.344|
 |Pothos|4cda01b9-62e2-46c5-830f-b7f262a58fb1|21|61|34.426|
+
+### dbt snapshots - Which products had their inv change from Week 2 to Week 3?
+
+```sql
+with changed_prods as (
+    select distinct product_id from (
+        select 
+            *,
+            rank() over (partition by product_id order by dbt_valid_from) as rnk
+        from dev_db.dbt_chrono202323gmailcom.products_snapshot
+        order by product_id, dbt_valid_from) inv_change
+    where rnk > 1
+)
+
+select name, inventory, dbt_valid_from, dbt_valid_to
+from dev_db.dbt_chrono202323gmailcom.products_snapshot
+where product_id in (select product_id from changed_prods)
+order by product_id, dbt_valid_from;
+```
+
+Below products had their inventory changed:
+
+|NAME|INVENTORY|DBT_VALID_FROM|DBT_VALID_TO|
+|:--------|:------------------|:-----------------------------------------| :------------------------|
+|Pothos|0|2024-04-02 18:15:21.847|2024-04-09 23:13:28.276|
+|Pothos|20|2024-04-09 23:13:28.276||
+|Philodendron|15|2024-04-02 18:15:21.847|2024-04-09 23:13:28.276|
+|Philodendron|30|2024-04-09 23:13:28.276||
+|Bamboo|44|2024-04-02 18:15:21.847|2024-04-09 23:13:28.276|
+|Bamboo|23|2024-04-09 23:13:28.276||
+|ZZ Plant|53|2024-04-02 18:15:21.847|2024-04-09 23:13:28.276|
+|ZZ Plant|41|2024-04-09 23:13:28.276||
+|Monstera|50|2024-04-02 18:15:21.847|2024-04-09 23:13:28.276|
+|Monstera|31|2024-04-09 23:13:28.276||
+|String of pearls|0|2024-04-02 18:15:21.847|2024-04-09 23:13:28.276|
+|String of pearls|10|2024-04-09 23:13:28.276||

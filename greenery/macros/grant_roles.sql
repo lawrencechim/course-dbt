@@ -1,4 +1,4 @@
-{% macro grant(role) %}
+{% macro grant_roles(role) %}
 
     {% set sql %}
       GRANT USAGE ON SCHEMA {{ schema }} TO ROLE {{ role }};

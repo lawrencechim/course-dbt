@@ -1,9 +1,11 @@
 {{
     config(
         materialized = 'table',
-        post_hook = 'grant select on {{ this }} to role REPORTING'
+        post_hook = "{{ grant_roles('REPORTING') }}"
     )
 }}
+-- post_hook = 'grant select on {{ this }} to role REPORTING'
+
 
 with order_items as (
     select * from {{ ref('stg_postgres__order_items') }}

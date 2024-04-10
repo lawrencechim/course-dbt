@@ -1,0 +1,25 @@
+version: 2
+
+macros:
+  - name: event_types
+    description: Get the distinct event types under event_type column,
+                 and then wrap a sum and case when statement to count its occurrence
+    arguments: 
+      - name: table_name
+        description: table from which to grab the event_type column
+      - name: column_name
+        description: column name from which to grab the distinct values
+
+  - name: grant_roles
+    description: Grant usage and select to the specified role 
+    arguments: 
+      - name: role
+        description: role in which usage and select privileges will be applied to
+
+  - name: positive_values
+    description: Check for negative values in a column for testing purposes
+    arguments: 
+      - name: model
+        description: the referenced table in which the positive value check will be applied to
+      - name: column_name
+        description: column in which the positive value check will be applied to
