@@ -1,36 +1,35 @@
 ## Week 3 Questions
 
-### Part 1
+### What is our overall conversion rate?
 
-What is our overall conversion rate?
+```sql
+select 
+    count(distinct case when checkouts >=1 then session_id end) as total_sessions_purhcased,
+    count(distinct session_id) as total_sessions,
+    round(100*(total_sessions_purhcased / total_sessions), 3) as conv_rate
+from dev_db.dbt_chrono202323gmailcom.int_session_events_agg;
+```
 
-    ```sql
-    select 
-        count(distinct case when checkouts >=1 then session_id end) as total_sessions_purhcased,
-        count(distinct session_id) as total_sessions,
-        round(100*(total_sessions_purhcased / total_sessions), 3) as conv_rate
-    from dev_db.dbt_chrono202323gmailcom.int_session_events_agg;
-    ```
+The conversion rate is 62.46%.
 
-    The conversion rate is 62.46%.
+### What is our conversion rate by product?
 
-    What is our conversion rate by product?
+```sql
+select 
+    name,
+    p.product_id,
+    count(distinct case when checkout >=1 then session_id end) as total_sessions_purchased,
+    count(distinct session_id) as total_sessions,
+    round(100*(total_sessions_purchased / total_sessions), 3) as conv_rate
+from dev_db.dbt_chrono202323gmailcom.fact_product_conv fpc
+join dev_db.dbt_chrono202323gmailcom.stg_postgres__products p
+on fpc.product_id = p.product_id
+group by 1,2
+order by conv_rate desc;
+```
 
-    ```sql
-    select 
-        name,
-        p.product_id,
-        count(distinct case when checkout >=1 then session_id end) as total_sessions_purchased,
-        count(distinct session_id) as total_sessions,
-        round(100*(total_sessions_purchased / total_sessions), 3) as conv_rate
-    from dev_db.dbt_chrono202323gmailcom.fact_product_conv fpc
-    join dev_db.dbt_chrono202323gmailcom.stg_postgres__products p
-    on fpc.product_id = p.product_id
-    group by 1,2
-    order by conv_rate desc;
-    ```
 
-    | NAME | PRODUCT_ID | TOTAL_SESSIONS_PURCHASED | TOTAL_SESSIONS | CONV_RATE
+    | NAME | PRODUCT_ID | TOTAL_SESSIONS_PURCHASED | TOTAL_SESSIONS | CONV_RATE|
     |:-------- | :------------------ | :-----------------| :------------------------| :---------------|
     |String of pearls | fb0e8be7-5ac4-4a76-a1fa-2cc4bf0b2d80 | 39 | 64 | 60.938|
     |Arrow Head | 74aeb414-e3dd-4e8a-beef-0fa45225214d | 35 | 63 | 55.556|
